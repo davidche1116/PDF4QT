@@ -36,17 +36,11 @@ jobs:
           set VCPKG_ROOT=${env:GITHUB_WORKSPACE}\vcpkg\
           set "VCPKG_BINARY_SOURCES=clear;files,${env:GITHUB_WORKSPACE}\vcpkg\archives,readwrite"
 
-      - name: 'VCPKG: Install project dependencies'
-        run: |
-          .\vcpkg install tbb --triplet x64-windows
-          .\vcpkg install openjpeg ijg-libjpeg openssl lcms zlib freetype libpng blend2d --triplet x64-mingw-static
-        working-directory: vcpkg
-
       - name: Build project
         working-directory: pdf4qt
         shell: pwsh
         run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_VCPKG_BUILD_TYPE=Release -DPDF4QT_INSTALL_QT_DEPENDENCIES=ON -DPDF4QT_INSTALL_DEPENDENCIES=ON -DCMAKE_TOOLCHAIN_FILE="${env:GITHUB_WORKSPACE}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DPDF4QT_QT_ROOT="${env:Qt6_DIR}" -DPDF4QT_INSTALL_PREPARE_WIX_INSTALLER=ON -DPDF4QT_INSTALL_TO_USR=ON -G "MinGW Makefiles"
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER:FILEPATH=D:/a/PDF4QT/PDF4QT/qt/Qt/Tools/mingw1310_64/bin/x86_64-w64-mingw32-g++.exe -DCMAKE_GENERATOR:STRING=Ninja -DPDF4QT_INSTALL_QT_DEPENDENCIES:BOOL=ON -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-static -DCMAKE_C_COMPILER:FILEPATH=D:/a/PDF4QT/PDF4QT/qt/Qt/Tools/mingw1310_64/bin/gcc.exe -DCMAKE_VCPKG_BUILD_TYPE=Release -DPDF4QT_INSTALL_QT_DEPENDENCIES=ON -DPDF4QT_INSTALL_DEPENDENCIES=ON -DCMAKE_TOOLCHAIN_FILE="${env:GITHUB_WORKSPACE}\vcpkg\scripts\buildsystems\vcpkg.cmake" -DPDF4QT_QT_ROOT="${env:Qt6_DIR}" -DPDF4QT_INSTALL_PREPARE_WIX_INSTALLER=ON -DPDF4QT_INSTALL_TO_USR=ON -G "MinGW Makefiles"
           cmake --build build --config Release -j6
           cmake --install build
 
