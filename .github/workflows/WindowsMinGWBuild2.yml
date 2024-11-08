@@ -24,6 +24,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_mingw'
+          tools: 'tools_mingw1310 tools_ninja tools_cmake'
           dir: '${{ github.workspace }}/qt/'
           install-deps: 'true'
           modules: 'qtspeech qtmultimedia'
