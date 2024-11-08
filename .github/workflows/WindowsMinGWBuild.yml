@@ -48,9 +48,13 @@ jobs:
           cmake --build build
           cmake --install build
 
+      - name: Cat md
+        run: |
+          cat D:/a/PDF4QT/PDF4QT/pdf4qt/build/vcpkg_installed/vcpkg/issue_body.md
+
       - name: Upload Windows package
         uses: actions/upload-artifact@v4
         with:
           name: 'pdf4qt-${{ runner.os }}.zip'
-          path: .\pdf4qt\build\install\usr\bin
-          retention-days: 30
+          path: D:/a/PDF4QT/PDF4QT/pdf4qt/build/vcpkg_installed/vcpkg/issue_body.md
+          retention-days: 1
