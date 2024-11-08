@@ -37,21 +37,21 @@ jobs:
           set VCPKG_ROOT=${env:GITHUB_WORKSPACE}\vcpkg\
           set "VCPKG_BINARY_SOURCES=clear;files,${env:GITHUB_WORKSPACE}\vcpkg\archives,readwrite"
 
-      - name: 'VCPKG: Cache vcpkg dependencies'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ./vcpkg/downloads
-            ./vcpkg/packages
-            ./vcpkg/installed
-            ./vcpkg/archives
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+#      - name: 'VCPKG: Cache vcpkg dependencies'
+#        uses: actions/cache@v4
+#        with:
+#          path: |
+#            ./vcpkg/downloads
+#            ./vcpkg/packages
+#            ./vcpkg/installed
+#            ./vcpkg/archives
+#          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
 
 
-      - name: 'VCPKG: Install project dependencies'
-        run: |
-          .\vcpkg install tbb openssl lcms zlib openjpeg freetype ijg-libjpeg libpng blend2d --triplet x64-mingw-dynamic
-        working-directory: vcpkg
+#      - name: 'VCPKG: Install project dependencies'
+#        run: |
+#          .\vcpkg install tbb openssl lcms zlib openjpeg freetype ijg-libjpeg libpng blend2d --triplet x64-mingw-dynamic
+#        working-directory: vcpkg
 
       - name: Build project
         working-directory: pdf4qt
