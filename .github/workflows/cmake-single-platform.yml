@@ -1,0 +1,53 @@
+name: CMake on a single platform
+
+on:
+  workflow_dispatch:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.8.0'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_mingw'
+        modules: 'qtactiveqt qtgraphs qtimageformats qtmultimedia qtspeech qtwebview'
+        tools: 'tools_cmake tools_mingw1310 tools_ninja'
+        cache-key-prefix: 'qt-680-mingw'
+
+    - name: vcpkg build
+      uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        pkgs: tbb
+        triplet: x64-windows-release
+        token: ${{ github.token }}
+        github-binarycache: true
+
+    - name: Build project
+      working-directory: pdf4qt
+      shell: pwsh
+      run: |
+        cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_VCPKG_BUILD_TYPE=Release -DPDF4QT_INSTALL_QT_DEPENDENCIES=ON -DPDF4QT_INSTALL_DEPENDENCIES=ON -DPDF4QT_QT_ROOT="${env:Qt6_DIR}" -DPDF4QT_INSTALL_MSVC_REDISTRIBUTABLE=OFF -DPDF4QT_INSTALL_PREPARE_WIX_INSTALLER=ON -DPDF4QT_INSTALL_TO_USR=ON -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -DVCPKG_MANIFEST_MODE=OFF 
+        cmake --build build --config Release -j6
+        cmake --install build
+
+    - name: Upload Windows package
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'pdf4qt-${{ runner.os }}.zip'
+        path: .\pdf4qt\build\install\usr\bin
+        retention-days: 30
