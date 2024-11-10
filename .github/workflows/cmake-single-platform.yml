@@ -32,8 +32,8 @@ jobs:
       uses: johnwason/vcpkg-action@v6
       id: vcpkg
       with:
-        pkgs: tbb
-        triplet: x64-windows-release
+        manifest-dir: ${{ github.workspace }}
+        triplet: x64-mingw-dynamic
         token: ${{ github.token }}
         github-binarycache: true
 
